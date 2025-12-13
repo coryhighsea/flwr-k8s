@@ -66,7 +66,7 @@ project:
 
 docker:
   registry: docker.io
-  username: cjhisey
+  username: username
   image_name: flwr-client
   tag: latest
   platforms:
@@ -166,7 +166,7 @@ flwr-k8s init [OPTIONS]
 Options:
   --project-dir PATH        Project directory (default: current directory)
   --server-address TEXT     SuperLink server address
-  --docker-username TEXT    Docker Hub username (default: cjhisey)
+  --docker-username TEXT    Docker Hub username (default: username)
   --replicas INTEGER        Number of client replicas (default: 2)
 ```
 
@@ -341,7 +341,7 @@ flwr run . --run-config "num-server-rounds=10 local-epochs=2"
 ```yaml
 docker:
   registry: docker.io              # Docker registry
-  username: cjhisey               # Your Docker Hub username
+  username: username               # Your Docker Hub username
   image_name: flwr-client         # Image name
   tag: latest                     # Image tag
   platforms:                      # Target platforms
@@ -585,7 +585,7 @@ Contributions welcome! Please submit issues or pull requests.
 
 ## 📄 License
 
-Apache-2.0
+MIT
 
 ---
 
