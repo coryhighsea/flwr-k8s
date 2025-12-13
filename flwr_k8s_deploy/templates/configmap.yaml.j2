@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flower-config
+  labels:
+    app: flwr-client
+data:
+  SERVER_ADDRESS: "{{ server_address }}"
+  NUM_PARTITIONS: "{{ replicas }}"
+  NUM_SERVER_ROUNDS: "{{ num_server_rounds }}"
+  LOCAL_EPOCHS: "{{ local_epochs }}"

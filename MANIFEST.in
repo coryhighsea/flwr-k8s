@@ -1,0 +1,3 @@
+include README.md
+include LICENSE
+recursive-include flwr_k8s_deploy/templates *

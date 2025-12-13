@@ -1,0 +1,101 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flwr-client
+  namespace: {{ namespace }}
+  labels:
+    app: flwr-client
+spec:
+  replicas: {{ replicas }}
+  selector:
+    matchLabels:
+      app: flwr-client
+  template:
+    metadata:
+      labels:
+        app: flwr-client
+    spec:
+      # Anti-affinity: Spread pods across different nodes
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - flwr-client
+              topologyKey: kubernetes.io/hostname
+      
+      containers:
+      - name: flwr-client
+        image: {{ full_image }}
+        imagePullPolicy: Always
+        
+        env:
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        
+        - name: SERVER_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              name: flower-config
+              key: SERVER_ADDRESS
+        
+        - name: NUM_PARTITIONS
+          valueFrom:
+            configMapKeyRef:
+              name: flower-config
+              key: NUM_PARTITIONS
+        
+        command: ["sh", "-c"]
+        args:
+        - |
+          # Calculate partition ID from pod name
+          POD_NUM=$(echo $HOSTNAME | grep -o '[0-9]*$')
+          PARTITION_ID=${POD_NUM:-0}
+          
+          echo "=========================================="
+          echo "Starting Flower SuperNode"
+          echo "=========================================="
+          echo "Hostname: $HOSTNAME"
+          echo "Node: $NODE_NAME"
+          echo "Partition ID: $PARTITION_ID"
+          echo "Server: $SERVER_ADDRESS"
+          echo "=========================================="
+          
+          # Run as SuperNode that waits for tasks from SuperLink
+          flower-supernode \
+            --insecure \
+            --superlink $SERVER_ADDRESS \
+            --node-config "partition-id=$PARTITION_ID num-partitions=$NUM_PARTITIONS"
+        
+        resources:
+          requests:
+            memory: "{{ resources.requests.memory }}"
+            cpu: "{{ resources.requests.cpu }}"
+          limits:
+            memory: "{{ resources.limits.memory }}"
+            cpu: "{{ resources.limits.cpu }}"
+        
+        # Health checks
+        livenessProbe:
+          exec:
+            command:
+            - pgrep
+            - -f
+            - flower-supernode
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3

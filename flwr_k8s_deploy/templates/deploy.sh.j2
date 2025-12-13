@@ -1,0 +1,44 @@
+#!/bin/bash
+# Deploy Flower clients to Kubernetes
+
+set -e
+
+echo "=========================================="
+echo "Deploying Flower Clients to Kubernetes"
+echo "=========================================="
+
+# Check if kubectl is configured
+if ! kubectl cluster-info &> /dev/null; then
+    echo "❌ Error: kubectl not configured or cluster not reachable"
+    exit 1
+fi
+
+# Apply ConfigMap
+echo "📦 Applying ConfigMap..."
+kubectl apply -f k8s/configmap.yaml
+
+# Apply Deployment
+echo "📦 Applying Deployment..."
+kubectl apply -f k8s/deployment.yaml
+
+echo ""
+echo "⏳ Waiting for pods to be ready..."
+kubectl wait --for=condition=ready pod -l app=flwr-client --timeout=120s || {
+    echo "⚠️  Pods taking longer than expected. Check status with:"
+    echo "   kubectl get pods -l app=flwr-client"
+    exit 0
+}
+
+echo ""
+echo "✅ Deployment successful!"
+echo ""
+echo "=========================================="
+echo "Deployment Status"
+echo "=========================================="
+kubectl get pods -l app=flwr-client -o wide
+
+echo ""
+echo "Useful commands:"
+echo "  View logs: flwr-k8s logs"
+echo "  Check status: flwr-k8s status"
+echo "  Delete: flwr-k8s delete"

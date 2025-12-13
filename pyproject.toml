@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "flwr-k8s-deploy"
+version = "0.1.0"
+description = "Kubernetes deployment tool for Flower Federated Learning projects"
+readme = "README.md"
+license = "Apache-2.0"
+authors = [
+    {name = "Cory", email = "cory@example.com"}
+]
+requires-python = ">=3.8"
+dependencies = [
+    "click>=8.0.0",
+    "pyyaml>=6.0",
+    "jinja2>=3.0.0",
+    "rich>=13.0.0",
+    "tomli>=2.0.0; python_version<'3.11'",
+]
+
+[project.scripts]
+flwr-k8s = "flwr_k8s_deploy.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=22.0.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["flwr_k8s_deploy"]
