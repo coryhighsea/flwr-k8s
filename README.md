@@ -16,12 +16,42 @@ Simplify deploying Flower FL applications to Kubernetes clusters with automated 
 
 ---
 
+## 🌸 About Flower
+
+[Flower (flwr)](https://flower.ai/) is a friendly federated learning framework that enables distributed machine learning across multiple clients while keeping data decentralized. This tool simplifies deploying Flower projects to Kubernetes.
+
+### Setting Up a Flower Project
+
+1. **Create a virtual environment** (Python 3.11 recommended for better compatibility with PyTorch and Flower):
+   ```bash
+   python3.11 -m venv venv
+   source venv/bin/activate  # On macOS/Linux
+   ```
+
+2. **Install Flower and create a new project**:
+   ```bash
+   pip install flwr
+   flwr new new-project
+   cd new-project
+   pip install -e .
+   ```
+
+3. **Clone this deployment tool**:
+   ```bash
+   git clone https://github.com/coryhighsea/flwr-k8s.git
+   ```
+
+Now you're ready to deploy your Flower project to Kubernetes!
+
+---
+
 ## 📦 Installation
 
 ### From Source
 
 ```bash
-cd flwr-k8s-deploy
+git clone https://github.com/coryhighsea/flwr-k8s.git
+cd flwr-k8s
 pip install -e .
 ```
 
